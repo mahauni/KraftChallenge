@@ -1,0 +1,60 @@
+version: "3"
+
+services:
+  api:
+    image: kraft-api
+    restart: always
+    container_name: kraft-api
+    build:
+      context: ./KraftAPI
+    depends_on:
+      - postgres
+    expose:
+      - 8080
+
+  nginx:
+    image: custom-nginx
+    restart: always
+    container_name: custom-nginx
+    build:
+      context: ./KraftApp
+    ports:
+      - "80:80"
+    depends_on:
+      - webserver
+#    volumes:
+#      - static-content:/app/KraftApp/static
+
+  webserver:
+    image: kraft-webserver
+    restart: always
+    build:
+      context: ./KraftApp/webserver
+    ports:
+      - "5000:5000"
+    depends_on:
+      - api
+#    volumes:
+#      - static-content:/app/static
+
+  postgres:
+    image: "postgres"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=root
+    ports:
+      - "5432:5432"
+
+  pgadmin-compose:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+    ports:
+      - "54321:80"
+    depends_on:
+      - postgres
+
+#volumes:
+#  static-content:

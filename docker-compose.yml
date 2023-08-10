@@ -28,6 +28,7 @@ services:
   webserver:
     image: kraft-webserver
     restart: always
+    container_name: kraft-webserver
     build:
       context: ./KraftApp/webserver
     ports:
